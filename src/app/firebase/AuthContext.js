@@ -3,7 +3,7 @@
 import React, { useContext, createContext, useState, useEffect } from 'react';
 import { signInWithEmailAndPassword, signOut, createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { db } from './firebase';
-import { doc, setDoc, getDoc, updateDoc, getDocs, where, collection, query } from 'firebase/firestore';
+import { doc, setDoc, getDoc, updateDoc, getDocs, where, collection, query, arrayUnion } from 'firebase/firestore';
 import { auth } from './firebase';
 
 const AuthContext = createContext();
@@ -58,8 +58,13 @@ export const AuthContextProvider = ({ children }) => {
         poolDescription: poolDesc,
         poolPassword: poolPassword,
         poolOwner: auth.currentUser.uid,
+        poolOwnerName: auth.currentUser.displayName,
         isPoolAcceptingMembers: true,
-        poolMembers: [auth.currentUser.uid],
+        poolMembers: [{
+          userId: auth.currentUser.uid,
+          userName: auth.currentUser.displayName
+        
+        }],
         poolScoringRules: poolScoring,
         poolID: poolID
       });
@@ -82,12 +87,49 @@ export const AuthContextProvider = ({ children }) => {
 
     const poolCollection = query(collection(db, 'pools'), where('poolID', '==', poolId));
     const poolData = await getDocs(poolCollection);
+
+    if (poolData.empty) {
+      console.log('No matching documents.');
+      return { success: false, error: 'No matching documents.' };
+    }
+
     const Data = poolData.docs[0].data();
-    
-    console.log(Data);
     return Data;
 
     
+  }
+
+  const joinPool = async (poolId, poolPassword, joinerId) => {
+    const poolCollection = query(collection(db, 'pools'), where('poolID', '==', poolId));
+    const poolData = await getDocs(poolCollection);
+
+    if (poolData.empty) {
+      console.log('No matching documents.');
+      return { success: false, error: 'No matching documents.' };
+    }
+
+    const Data = poolData.docs[0].data();
+
+    if (Data.poolPassword === poolPassword) {
+      const userCollection = doc(db, 'users', joinerId);
+
+      await updateDoc(userCollection, {
+        poolsJoined: poolId
+      });
+
+      const poolCollection = doc(db, 'pools', Data.poolName);
+
+      await updateDoc(poolCollection, {
+        poolMembers: arrayUnion({
+          userId: joinerId,
+          userName: auth.currentUser.displayName
+        })
+      });
+
+      return { success: true };
+    } else {
+      return { success: false, error: 'Incorrect password.' };
+    }
   }
 
 
@@ -128,7 +170,7 @@ useEffect(() => {
 }, []);
 
 return (
-  <AuthContext.Provider value={{ user, Login, logOut, signUp, userData, loading, createPool, getPoolData }}>
+  <AuthContext.Provider value={{ user, Login, logOut, signUp, userData, loading, createPool, getPoolData, joinPool }}>
     {children}
   </AuthContext.Provider>
 );
