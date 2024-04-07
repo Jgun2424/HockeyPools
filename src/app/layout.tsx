@@ -1,8 +1,17 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Poppins } from "next/font/google";
 import "./globals.css";
+import Nav from "@/components/Nav";
+import { ThemeProvider } from "@/components/theme-provider"
+import { Toaster } from "@/components/ui/sonner"
+import { AuthContextProvider } from "./firebase/AuthContext";
 
-const inter = Inter({ subsets: ["latin"] });
+const poppins = Poppins({
+  weight: ["100", "300", "400", "500", "700", "900"],
+  style: ['normal'],
+  subsets: ['latin'],
+  display: 'swap'
+})
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -16,7 +25,20 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <body className={poppins.className}>
+        <Toaster position="top-center" richColors/>
+      <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+        <AuthContextProvider>
+          <Nav />
+          {children}
+        </AuthContextProvider>
+        </ThemeProvider>
+      </body>
     </html>
   );
 }
