@@ -9,6 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Copy } from 'lucide-react';
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Card } from '@/components/ui/card';
 import { Label } from '@radix-ui/react-dropdown-menu';
 import { Input } from '@/components/ui/input';
 import PoolMembers from '../../components/PoolMembers';
@@ -41,10 +42,10 @@ export default function page() {
 
           if (poolData.success === false) return toast.error(poolData.error);
 
-          if (poolData.poolMembers.filter((member: any) => member.userId === userData.userId).length === 0) {
-            toast.error('You are not a member of this pool');
-            return router.push('/');
-          }
+          // if (poolData.poolMembers.filter((member: any) => member.userId === userData.userId).length === 0) {
+          //   toast.error('You are not a member of this pool');
+          //   return router.push('/');
+          // }
 
           setPoolData(poolData);
     
@@ -81,20 +82,18 @@ export default function page() {
   return (
     <div className='flex flex-col gap-1 w-full max-w-screen-2xl m-auto p-5 justify-between pt-0'>
       <div className='flex flex-col gap-2'>
-        <div className='flex flex-row bg-secondary  p-5 rounded-lg'>
+        <Card className='flex flex-row p-5 rounded-lg'>
           <h1 className='text-3xl font-bold text-primary'>{poolData?.poolName}</h1>
-        </div>
-        <div className='grid grid-cols-3 gap-2'>
-          <div className='flex flex-row bg-secondary  p-5 rounded-lg'>
-          </div>
+        </Card>
+        <div className='grid grid-cols-2 gap-2'>
 
-          <div className='flex flex-col bg-secondary  p-5 rounded-lg'>
+          <Card className='flex flex-col p-5 rounded-lg'>
             <div className='flex flex-row justify-between items-center w-full'>
               <h1 className='text-lg'>Pool Leaders</h1>
             </div>
-          </div>
+          </Card>
 
-          <div className='flex flex-col bg-secondary  p-5 rounded-lg'>
+          <Card className='flex flex-col p-5 rounded-lg'>
             <div className='flex flex-row justify-between items-center w-full'>
               <h1 className='text-lg'>Members</h1>
               <Badge>{poolData?.poolMembers?.length}</Badge>
@@ -107,14 +106,20 @@ export default function page() {
                 ))
               }
             </div>
-          </div>
+          </Card>
 
         </div>
 
         <div className='flex flex-row gap-2 justify-between mt-2'>
           <div className='flex flex-row gap-2 '>
-            <Button variant='default'>Edit Pool</Button>
-            <Button variant='destructive'>Delete Pool</Button>
+              {
+                isOwner && (
+                  <>
+                    <Button variant='default'>Edit Pool</Button>
+                    <Button variant='destructive'>Delete Pool</Button>
+                  </>
+                )
+              }
           </div>
 
 

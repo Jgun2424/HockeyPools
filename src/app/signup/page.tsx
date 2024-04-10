@@ -68,7 +68,7 @@ const handleSignUp = async () => {
 
   return (
     <div className="flex flex-col gap-1 w-full max-w-screen-2xl m-auto p-5 justify-between pt-0">
-        <div className='grid grid-cols-2 h-[89vh]'>
+        <div className='grid grid-cols-2 h-[88vh]'>
             <div className="bg-secondary rounded-l-lg flex flex-col p-10 gap-2 justify-center shadow-inner">
                 <h1 className="text-5xl text-primary font-bold tracking-tighter text-center">Welcome!</h1>
                 <p className="tracking-tight text-center">Create your new playoff pool account!</p>

@@ -61,10 +61,10 @@ export default function page() {
         }
 
 
-        if (userData?.poolsCreated > 0) {
-            toast.error('You can only create one pool at a time')
-            return;
-        }
+        // if (userData?.poolsCreated > 0) {
+        //     toast.error('You can only create one pool at a time')
+        //     return;
+        // }
 
         const poolScoring = {
             goals: Number(goalPointsValue),

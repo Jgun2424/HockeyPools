@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { ExternalLink } from "lucide-react";
 
 async function getData() {
-  const res = await fetch('https://d66545a3-447c-419f-8ae8-c8d5cf427615-00-qc988hrk28sr.kirk.replit.dev/api/teams', { next: { revalidate: 3600 } })
+  const res = await fetch('https://d66545a3-447c-419f-8ae8-c8d5cf427615-00-qc988hrk28sr.kirk.replit.dev/api/teams', { cache: 'no-cache' })
   if (!res.ok) {
     throw new Error('Failed to fetch data')
   }

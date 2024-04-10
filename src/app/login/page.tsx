@@ -11,14 +11,27 @@ import Link from 'next/link';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { AlertCircle, InfoIcon } from 'lucide-react';
 
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+  } from "@/components/ui/alert-dialog"
+
 
 export default function page() {
 const searchParams = useSearchParams();
 const router = useRouter()
 const [submitted, setSubmitted] = useState(false);
 const EmailRef = useRef<HTMLInputElement>(null);
+const [wrongAttempt, setWrongAttempt] = useState(0);
 const passwordRef = useRef<HTMLInputElement>(null);
-const { user, Login } = UserAuth();
+const { user, Login, sendPasswordReset } = UserAuth();
 console.log(user)
 
 
@@ -52,13 +65,47 @@ const handleLogin = async () => {
     } else {
         setSubmitted(false)
         toast.error(loginResponse.error.replace('Firebase:', ''))
+        setWrongAttempt(wrongAttempt + 1)
     }
 
 }
 
+    const sendResetLink = async () => {
+        const email = EmailRef.current?.value;
+
+        setWrongAttempt(0)
+
+        if (!email) {
+            toast.warning('Please enter your email')
+            return;
+        }
+
+        sendPasswordReset(email)
+
+        toast.success('Password reset link sent to your email')
+    }
+
+
   return (
     <div className="flex flex-col gap-1 w-full max-w-screen-2xl m-auto p-5 justify-between pt-0">
-        <div className='grid grid-cols-2 h-[89vh]'>
+
+        <AlertDialog open={wrongAttempt === 3 ? true : false}>
+        <AlertDialogContent>
+            <AlertDialogHeader>
+            <AlertDialogTitle>Forgot Your Password?</AlertDialogTitle>
+            <AlertDialogDescription>
+                We'll send a password reset link to your email.
+            </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setWrongAttempt(0)}>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={() => sendResetLink()}>Send Reset Link</AlertDialogAction>
+            </AlertDialogFooter>
+        </AlertDialogContent>
+        </AlertDialog>
+
+
+        <div className='grid grid-cols-2 h-[88vh]'>
             <div className="bg-secondary rounded-l-lg flex flex-col p-10 gap-2 justify-center shadow-inner">
                 <h1 className="text-5xl text-primary font-bold tracking-tighter text-center">Welcome Back!</h1>
                 <p className="tracking-tight text-center">Log back into your account to access or create a new pool!</p>
@@ -78,6 +125,9 @@ const handleLogin = async () => {
                 <div className='flex flex-col gap-2 mt-3 items-center'>
                     <Input type="email" placeholder="Email" ref={EmailRef}/>
                     <Input type="password" placeholder="Password" ref={passwordRef}/>
+                    <div className='flex items-start flex-row w-full cursor-pointer' onClick={() => setWrongAttempt(3)}>
+                        <span className='text-muted-foreground tracking-tighter text-sm'>Forgot Password?</span>
+                    </div>
                     <div className='w-full flex flex-col items-center gap-2'>
                         <Button onClick={() => handleLogin()} variant="default" disabled={submitted} className='w-full'>Login</Button>
                         <p>or</p>

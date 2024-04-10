@@ -1,17 +1,35 @@
 'use client'
 
-import React from 'react'
+import React, {useEffect, useState} from 'react'
 import { Button } from "@/components/ui/button"
 import { useTheme } from "next-themes"
 import Link from 'next/link'
-import { MoonIcon, SunIcon } from 'lucide-react'
-import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from '@/components/ui/dropdown-menu'
+import { useRouter } from 'next/navigation'
+import { LogOut, MoonIcon, SunIcon, User, HomeIcon } from 'lucide-react'
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuGroup, DropdownMenuPortal, DropdownMenuSeparator, DropdownMenuShortcut, DropdownMenuSub, DropdownMenuSubContent, DropdownMenuSubTrigger } from '@/components/ui/dropdown-menu'
 import { Badge } from "@/components/ui/badge"
 import { UserAuth } from '../app/firebase/AuthContext'
+import { Avatar, AvatarFallback } from './ui/avatar'
+
 
 export default function Nav() {
-    const { user, logOut } = UserAuth()
+    const { user, logOut, loading } = UserAuth()
+    const [clientLoading, setClientLoadfing] = useState(true)
+    const router = useRouter()
     const { setTheme } = useTheme()
+
+    useEffect(() => {
+        if (loading === false) {
+            setClientLoadfing(false)
+        }
+    }, [loading])
+
+    const handleLogout = async () => {
+        router.push('/')
+        await logOut()
+    }
+
+
   return (
     <div className='flex flex-row gap-1 w-full max-w-screen-2xl m-auto p-5 justify-between items-center'>
         <div className='flex flex-row gap-2'>
@@ -22,10 +40,36 @@ export default function Nav() {
         </div>
         
         {/* account area */}
-        <div className='flex flex-row gap-2'>
+        <div className='flex flex-row gap-2 items-center'>
             {
                 user ? (
-                    <Button variant='default' onClick={logOut}>My Account</Button>
+                    <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                    <div className='flex flex-row gap-2 items-center hover:bg-primary-foreground p-1 rounded-sm hover:cursor-pointer'>
+                            <Avatar>
+                                <AvatarFallback>{clientLoading ? null : user?.displayName?.charAt(0).toUpperCase()}</AvatarFallback>
+                            </Avatar>
+                            <h1 className='text-base'>{clientLoading ? null : user?.displayName}</h1>
+                    </div>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent className="w-56">
+                    <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuGroup>
+                        <DropdownMenuItem asChild>
+                                <Link href='/profile' className='flex flex-row items-center hover:bg-muted'>
+                                    <User className="mr-2 h-4 w-4" />
+                                    <span>Profile</span>
+                                </Link>
+                        </DropdownMenuItem>
+                    </DropdownMenuGroup>
+                    <DropdownMenuSeparator />
+                        <DropdownMenuItem onClick={() => handleLogout()}>
+                        <LogOut className="mr-2 h-4 w-4" />
+                        <span>Log Out</span>
+                        </DropdownMenuItem>
+                    </DropdownMenuContent>
+                    </DropdownMenu>
                 ) : (
                     <>
                     <Link href='/login'>
