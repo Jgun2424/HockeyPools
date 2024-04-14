@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Button } from '@/components/ui/button';
 import { Badge, Link } from 'lucide-react';
 import ViewRoster from '@/components/ViewRoster';
+import ViewRosterTest from '@/components/ViewRosterTest';
 
 export default function page() {
   const searchParams = useSearchParams();
@@ -24,6 +25,10 @@ export default function page() {
   console.log(searchParams.get('pool_id'))
 
   useEffect(() => {
+
+    if (searchParams.get('viewType') === 'currentRoster') {
+
+    }
     if (searchParams.get('player_id') || searchParams.get('pool_id')) {
         if (loading === false) {
             const poolId = searchParams.get('pool_id');
@@ -34,7 +39,7 @@ export default function page() {
 
                 if (poolData.success === false) return toast.error(poolData.error); // check if pool data was successfully retrieved
                 if (poolData.poolOwner !== userData.userId) return toast.error('Only the pool owner can add/edit players'); // check if user is pool owner
-
+                
                 const playerData = await getPoolMemberInfo(playerId, poolId);
 
                 setPlayerData(playerData);
@@ -63,7 +68,7 @@ export default function page() {
   const handleSelectedTeam = (e) => {
     setSelectedTeam(e)
 
-    
+    console.log(e)
     playoffTeams?.map((team: any) => {
         if (team.team === e) {
             setAllTeamData(team)
@@ -73,7 +78,7 @@ export default function page() {
 
   return (
     <div className='flex flex-col gap-1 w-full max-w-screen-2xl m-auto p-5 justify-between pt-0'>
-        <Card>
+        <Card className='bg-muted mb-1'>
             <CardHeader>
                 <CardTitle className="flex flex-row gap-2 items-center">Editing Player {playerData?.userName}</CardTitle>
                 <CardDescription>Welcome to the editing page. Here you can add/delete to a roster. Please keep in mind that we are in beta and this feature may not work as expected. Please report any bugs to the developer. Your help is greatly appreciated.
@@ -93,7 +98,9 @@ export default function page() {
           </CardFooter>
         </Card>
 
-        <ViewRoster selectedTeam={selectedTeam} allTeamData={allTeamData} loading={clientLoading}/>
+        {
+          searchParams.get('viewType') !== 'currentRoster' ? <ViewRosterTest selectedTeam={selectedTeam} allTeamData={allTeamData} loading={clientLoading}/> : null
+        }
 
     </div>
   )

@@ -148,6 +148,11 @@ export const AuthContextProvider = ({ children }) => {
       
     }
 
+    const addPlayerToRoster = async (poolId, playerId) => {
+
+    }
+
+
 
     // Function to log out the user
     const logOut = () => {

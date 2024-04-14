@@ -76,10 +76,13 @@ export default function page() {
             shutouts: Number(shutoutPointsValue)
         }
 
-        const Response = await createPool(poolName, poolDesc, poolPassword, poolScoring, uuidv4())
+        const poolID = uuidv4();
+
+        const Response = await createPool(poolName, poolDesc, poolPassword, poolScoring, poolID)
 
         if (Response.success === true) {
             toast.success('Pool created successfully!')
+            router.push(`/pool?id=${poolID}`)
         } else {
             toast.error(Response.error)
         }

@@ -1,14 +1,10 @@
 import React, {useEffect, useState} from 'react'
-import {
-    Table,
-    TableBody,
-    TableCaption,
-    TableCell,
-    TableFooter,
-    TableHead,
-    TableHeader,
-    TableRow,
-  } from "@/components/ui/table"
+import { Card } from './ui/card';
+import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
+import { Separator } from './ui/separator';
+import { StarIcon, StarsIcon } from 'lucide-react';
+import { Icon } from '@iconify/react';
+import PlayerCard from './PlayerCard';
 
 export default function ViewRoster(props: any) {
     const [defensePlayers, setDefensePlayers] = useState([]);
@@ -19,7 +15,7 @@ export default function ViewRoster(props: any) {
             const points = props.allTeamData.players;
 
             // Filter players who have played more than 5 games
-            const filteredPlayers = points.filter(player => player.games_played > 7);
+            const filteredPlayers = points.filter(player => player.games_played > 13);
             
             // Separate players into groups based on their positions
             const defensePlayers = filteredPlayers.filter(player => player.position === "D");
@@ -46,48 +42,30 @@ export default function ViewRoster(props: any) {
     
     if (props.selectedTeam === '') return <div>Select a team</div>
 
+    console.log(props);
+
+    
+
   return (
 
-    <div className="flex flex-col gap-2">
-        <div className="grid gap-3">
-        <Table>
-                <TableHeader>
-                    <TableRow>
-                        <TableHead>Player</TableHead>
-                        <TableHead className='text-center'>Points</TableHead>
-                        <TableHead className='text-right'>Player Status</TableHead>
-                    </TableRow>
-                </TableHeader>
-                <TableBody>
-                    {forwardPlayers.map((player: any) => (
-                        <TableRow key={player.player_id} className='cursor-pointer'>
-                            <TableCell className='w-full flex items-end gap-3'><img src={`https://int-images.sportsnet.ca/player_headshots/NHL/280/${player.id}.png`} alt="" className='w-[70px]'/><span className='text-xl'>{player.first_name}, {player.last_name} ({player.position})</span></TableCell>
-                            <TableCell className='text-center text-2xl font-bold'>{player.points}</TableCell>
-                            <TableCell className='text-right text-xl font-bold'>Not Picked</TableCell>
-                        </TableRow>
-                    ))}
-                </TableBody>
-            </Table>
+    <div className="flex flex-col gap-2 mt-6">
+        <h1 className="text-2xl font-bold text-primary">Forwards</h1>
+            <div className="grid gap-3 grid-cols-4 max-[1200px]:grid-cols-3 max-[900px]:grid-cols-2 max-[550px]:grid-cols-1">       
+            {forwardPlayers.map((player: any, index: number) => {
+                return (
+                    <PlayerCard player={player}/>
+                )
+            })}
+            </div>
+            <h1 className="text-2xl font-bold text-primary mt-6">Defence</h1>
+            <div className="grid gap-3 grid-cols-4 max-[1200px]:grid-cols-3 max-[900px]:grid-cols-2 max-[550px]:grid-cols-1">       
+            {defensePlayers.map((player: any, index: number) => {
+                return (
+                    <PlayerCard player={player}/>
+                )
+            })}
+            </div>
 
-            <Table>
-                <TableHeader>
-                    <TableRow>
-                        <TableHead>Player</TableHead>
-                        <TableHead className='text-center'>Points</TableHead>
-                        <TableHead className='text-right'>Player Status</TableHead>
-                    </TableRow>
-                </TableHeader>
-                <TableBody>
-                    {defensePlayers.map((player: any) => (
-                        <TableRow key={player.player_id} className='cursor-pointer'>
-                          <TableCell className='w-full flex items-end gap-3'><img src={`https://int-images.sportsnet.ca/player_headshots/NHL/280/${player.id}.png`} alt="" className='w-[70px]'/><span className='text-xl'>{player.first_name}, {player.last_name} ({player.position})</span></TableCell>
-                            <TableCell className='text-center text-2xl font-bold'>{player.points}</TableCell>
-                            <TableCell className='text-right text-xl font-bold'>Not Picked</TableCell>
-                        </TableRow>
-                    ))}
-                </TableBody>
-            </Table>
-        </div>
     </div>
   )
 }

@@ -102,7 +102,7 @@ export default function page() {
             <div className='flex flex-col gap-2 mt-2'>
               {
                 poolData?.poolMembers?.map((member: any) => (
-                  <PoolMembers username={member.userName} uid={member.userId} data={member} key={member.userId}/>
+                  <PoolMembers username={member.userName} uid={member.userId} data={member} key={member.userId} poolOwner={poolData?.poolOwner} poolId={searchParams.get('id')}/>
                 ))
               }
             </div>

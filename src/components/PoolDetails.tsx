@@ -20,7 +20,7 @@ export default function PoolDetails(props: any) {
             getPool();
     }, []);
 
-    const cachedPoolData = useMemo(() => poolData, [poolData]);
+
 
     if (clientLoading) return <div>Loading...</div>;
 
@@ -28,14 +28,14 @@ export default function PoolDetails(props: any) {
         <Card>
             <CardHeader>
                 <CardTitle className="flex flex-row gap-2 items-center">
-                    {cachedPoolData?.poolName}{' '}
-                    {cachedPoolData?.poolOwner === user.uid ? <Badge>You own this pool</Badge> : null}
+                    {poolData?.poolName}{' '}
+                    {poolData?.poolOwner === user.uid ? <Badge>You own this pool</Badge> : null}
                 </CardTitle>
-                <CardDescription>{cachedPoolData?.poolDescription}</CardDescription>
+                <CardDescription>{poolData?.poolDescription}</CardDescription>
             </CardHeader>
             <CardFooter className="border-t px-6 py-4 flex flex-row gap-2">
                 <Button variant="default" asChild>
-                    <Link href={`/pool?id=${cachedPoolData?.poolID}`}>View Pool</Link>
+                    <Link href={`/pool?id=${poolData?.poolID}`}>View Pool</Link>
                 </Button>
                 <Button variant="destructive">Leave Pool</Button>
             </CardFooter>
