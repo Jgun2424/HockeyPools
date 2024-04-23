@@ -1,10 +1,10 @@
 'use client'
 import React, { useState } from 'react'
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
-import { Input } from './ui/input'
+import { Input } from '../ui/input'
 import { useSearchParams } from 'next/navigation'
-import { UserAuth } from '../app/firebase/AuthContext';
-import { Button } from './ui/button'
+import { UserAuth } from '../../app/firebase/AuthContext';
+import { Button } from '../ui/button'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 

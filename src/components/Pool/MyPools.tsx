@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react'
-import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from './ui/card'
-import { Button } from './ui/button'
+import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from '../ui/card'
+import { Button } from '../ui/button'
 import { UserAuth } from '@/app/firebase/AuthContext'
 import PoolDetails from './PoolDetails';
 

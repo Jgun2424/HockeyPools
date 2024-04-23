@@ -8,8 +8,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { Badge, Link } from 'lucide-react';
-import ViewRoster from '@/components/ViewRoster';
-import ViewRosterTest from '@/components/ViewRosterTest';
+import ViewRoster from '@/components/Pool/ViewRoster';
 
 export default function page() {
   const searchParams = useSearchParams();
@@ -20,15 +19,8 @@ export default function page() {
   const [selectedTeam, setSelectedTeam] = useState('');
   const [playerData, setPlayerData] = useState(null);
 
-
-  console.log(searchParams.get('player_id'))
-  console.log(searchParams.get('pool_id'))
-
   useEffect(() => {
 
-    if (searchParams.get('viewType') === 'currentRoster') {
-
-    }
     if (searchParams.get('player_id') || searchParams.get('pool_id')) {
         if (loading === false) {
             const poolId = searchParams.get('pool_id');
@@ -47,13 +39,9 @@ export default function page() {
                 const playoffTeamData = await fetch('https://d66545a3-447c-419f-8ae8-c8d5cf427615-00-qc988hrk28sr.kirk.replit.dev/api/teams/players')
                 const playoffTeamDataJson = await playoffTeamData.json();
 
-                console.log(playoffTeamDataJson)
-
                 setPlayoffTeams(playoffTeamDataJson);
 
                 setClientLoading(false);
-
-                console.log(playerData)
             }
 
             gatherPoolData();
@@ -81,10 +69,11 @@ export default function page() {
         <Card className='bg-muted mb-1'>
             <CardHeader>
                 <CardTitle className="flex flex-row gap-2 items-center">Editing Player {playerData?.userName}</CardTitle>
-                <CardDescription>Welcome to the editing page. Here you can add/delete to a roster. Please keep in mind that we are in beta and this feature may not work as expected. Please report any bugs to the developer. Your help is greatly appreciated.
+                <CardDescription>
+                    <p>Make sure to select the correct team for the player</p>
                 </CardDescription>
             </CardHeader>
-            <CardFooter className="border-t px-6 py-4 flex flex-row gap-2"  >
+            <CardFooter className="border-t px-6 flex flex-row gap-2"  >
               <Select onValueChange={(e) => handleSelectedTeam(e)}>
                 <SelectTrigger className="w-[180px]">
                     <SelectValue placeholder="Select Team" />
@@ -98,9 +87,8 @@ export default function page() {
           </CardFooter>
         </Card>
 
-        {
-          searchParams.get('viewType') !== 'currentRoster' ? <ViewRosterTest selectedTeam={selectedTeam} allTeamData={allTeamData} loading={clientLoading}/> : null
-        }
+
+          <ViewRoster selectedTeam={selectedTeam} allTeamData={allTeamData} loading={clientLoading} poolId={searchParams.get('pool_id')}/> 
 
     </div>
   )

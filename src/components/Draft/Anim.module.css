@@ -1,0 +1,16 @@
+/* Add these styles to your CSS file */
+@keyframes slamAndShake {
+    0% { transform: translate(0, 0); }
+    25% { transform: translate(-7px, -7px); scale: 0.92; }
+    50% { transform: translate(7px, 7px); }
+    75% { transform: translate(7px, -7px); }
+    100% { transform: translate(0px,0px); scale: 1;}
+  }
+  
+  .slamAndShakeAnimation {
+    animation: slamAndShake 0.3s ease-in forwards;
+  }
+
+  .overflow {
+    overflow:hidden
+  }

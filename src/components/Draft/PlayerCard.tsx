@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react'
-import { Card } from './ui/card';
-import { Separator } from './ui/separator';
+import { Card } from '../ui/card';
+import { Separator } from '../ui/separator';
 import { Icon } from '@iconify/react';
 import { Progress } from "@/components/ui/progress"
 
@@ -13,10 +13,11 @@ export default function ViewRoster(props: any) {
     const [overallStrength, setOverallStrength] = useState(0);
 
     useEffect(() => {
-        console.log(player);
-        playerGoalPercentage();
-        playerAssistPercentage();
-        calculateOverallStrength();
+        if (player) {
+            playerGoalPercentage();
+            playerAssistPercentage();
+            calculateOverallStrength();
+        }
     }, [player])
 
 
@@ -60,7 +61,7 @@ export default function ViewRoster(props: any) {
 
 
     const playerAssistPercentage = () => {
-        const normalizedAssists = (player.assists / 99) * 100;
+        const normalizedAssists = (player.assists / 105) * 100;
         const assistPercentage = normalizedAssists;
 
         setAssistPercentage(assistPercentage);
@@ -101,7 +102,7 @@ export default function ViewRoster(props: any) {
 
                             <div className='flex flex-col justify-center items-center absolute w-full z-30 top-2'>
                                 <div className='flex flex-row gap-3'>
-                                    {playerStarRaningGenerator(player)}
+                                    {player && playerStarRaningGenerator(player)}
                                 </div>
                             </div>
 

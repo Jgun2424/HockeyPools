@@ -1,10 +1,10 @@
 'use client'
 
 import React, {useEffect, useState} from 'react'
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from './ui/card'
-import { Input } from './ui/input'
-import { Button } from './ui/button'
-import { UserAuth } from '../app/firebase/AuthContext'
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '../ui/card'
+import { Input } from '../ui/input'
+import { Button } from '../ui/button'
+import { UserAuth } from '../../app/firebase/AuthContext'
 import { toast } from 'sonner'
 
 export default function UserSettings() {

@@ -3,7 +3,7 @@
 import React, { useContext, createContext, useState, useEffect } from 'react';
 import { signInWithEmailAndPassword, signOut, createUserWithEmailAndPassword, updateProfile, sendPasswordResetEmail, confirmPasswordReset } from 'firebase/auth';
 import { db } from './firebase';
-import { doc, setDoc, getDoc, updateDoc, getDocs, where, collection, query, arrayUnion } from 'firebase/firestore';
+import { doc, setDoc, getDoc, updateDoc, getDocs, where, collection, query, arrayUnion, deleteDoc, addDoc } from 'firebase/firestore';
 import { auth } from './firebase';
 
 // Create a context for authentication
@@ -50,25 +50,22 @@ export const AuthContextProvider = ({ children }) => {
     };
 
     // Function for creating a new pool
-    const createPool = async (poolName, poolDesc, poolPassword, poolScoring, poolID) => {
+    const createPool = async (data, pool_id) => {
         try {
-            const poolCollection = doc(db, 'pools', poolID);
-            await setDoc(poolCollection, {
-                poolName: poolName,
-                poolDescription: poolDesc,
-                poolPassword: poolPassword,
-                poolOwner: auth.currentUser.uid,
-                poolOwnerName: auth.currentUser.displayName,
-                isPoolAcceptingMembers: true,
-                poolScoringRules: poolScoring,
-                poolID: poolID
-            });
+            const poolCollection = doc(db, 'pools', pool_id);
+            await setDoc(poolCollection, data);
 
-            const poolCollectionDoc = collection(db, 'pools', poolID, 'poolMembers');
+            const poolCollectionDoc = collection(db, 'pools', pool_id, 'poolMembers');
 
             await setDoc(doc(poolCollectionDoc, auth.currentUser.uid), {
                 userId: auth.currentUser.uid,
                 userName: auth.currentUser.displayName
+            });
+
+            const chatCollectionDoc = collection(db, 'pools', pool_id, 'chat');
+
+            await addDoc(chatCollectionDoc, {
+                messages: []
             });
 
 
@@ -76,7 +73,7 @@ export const AuthContextProvider = ({ children }) => {
 
             await updateDoc(userDoc, {
                 poolsJoined: userData.poolsJoined + 1,
-                poolsJoinedList: arrayUnion(poolID)
+                poolsJoinedList: arrayUnion(pool_id)
             });
             
 
@@ -102,6 +99,14 @@ export const AuthContextProvider = ({ children }) => {
           const poolMembersQuery = collection(db, 'pools', poolId, 'poolMembers');
           const poolMembersSnapshot = await getDocs(poolMembersQuery);
           const poolMembersList = poolMembersSnapshot.docs.map(doc => doc.data());
+
+          const draftCollection = collection(db, 'pools', poolId, 'draft');
+
+          const chatCollection = collection(db, 'pools', poolId, 'chat');
+
+          const chatSnapshot = await getDocs(chatCollection);
+
+          const draftSnapshot = await getDocs(draftCollection);
   
           return {
               poolName: poolData.poolName,
@@ -113,7 +118,11 @@ export const AuthContextProvider = ({ children }) => {
               poolMembers: poolMembersList,
               poolScoringRules: poolData.poolScoringRules,
               poolID: poolData.poolID,
-              success: true
+              poolImage: poolData.poolImage,
+              success: true,
+              draftData: draftSnapshot.docs.map(doc => doc.data()),
+              chatData: chatSnapshot.docs.map(doc => doc.data()),
+              chat_id: chatSnapshot.docs[0].id
           };
       } catch (error) {
           console.error('Error fetching pool data:', error);
@@ -148,9 +157,51 @@ export const AuthContextProvider = ({ children }) => {
       
     }
 
-    const addPlayerToRoster = async (poolId, playerId) => {
+    const addPlayerToRoster = async (poolId, playerData) => {
+
+        const player_id = playerData.id;
+        const pool_id = poolId;
+
+        const poolCollectionDoc = collection(db, 'pools', pool_id, 'rosters');
+
+        await setDoc(doc(poolCollectionDoc, player_id), {
+            pickedBy: auth.currentUser.uid,
+            pickedByName: auth.currentUser.displayName,
+            playerID: player_id,
+        });
+
+        return { success: true };
 
     }
+
+    const removePlayerFromRoster = async (poolId, playerId) => {
+        const poolRosterRef = doc(db, 'pools', poolId, 'rosters', playerId.id);
+    
+        try {
+            // Delete the player's document from the roster collection
+            await deleteDoc(poolRosterRef);
+            return { success: true };
+        } catch (error) {
+            console.error('Error removing player from roster:', error);
+            return { success: false, error: 'Failed to remove player from roster' };
+        }
+    };
+
+    const checkIfPlayerIsPicked = async (poolId) => {
+        const poolRostersCollection = collection(db, 'pools', poolId, 'rosters');
+        const querySnapshot = await getDocs(poolRostersCollection);
+        
+        const takenPlayerIds = [];
+        querySnapshot.forEach(doc => {
+            const rosterData = doc.data();
+            console.log(rosterData.playerID);
+            takenPlayerIds.push(rosterData.playerID);
+        });
+
+        console.log(takenPlayerIds);
+
+        return takenPlayerIds;
+    };
 
 
 
@@ -213,7 +264,7 @@ export const AuthContextProvider = ({ children }) => {
 
     // Provide authentication context to child components
     return (
-        <AuthContext.Provider value={{ user, Login, logOut, signUp, userData, loading, createPool, getPoolData, joinPool, getPoolMemberInfo, sendPasswordReset, passwordReset }}>
+        <AuthContext.Provider value={{ user, Login, logOut, signUp, userData, loading, createPool, getPoolData, joinPool, getPoolMemberInfo, sendPasswordReset, passwordReset, addPlayerToRoster, checkIfPlayerIsPicked, removePlayerFromRoster }}>
             {children}
         </AuthContext.Provider>
     );

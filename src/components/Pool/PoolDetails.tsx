@@ -1,9 +1,9 @@
 import React, { useEffect, useState, useMemo } from 'react';
-import { Button } from './ui/button';
-import { Card, CardHeader, CardTitle, CardDescription, CardFooter } from './ui/card';
+import { Button } from '../ui/button';
+import { Card, CardHeader, CardTitle, CardDescription, CardFooter } from '../ui/card';
 import { UserAuth } from '@/app/firebase/AuthContext';
 import Link from 'next/link';
-import { Badge } from './ui/badge';
+import { Badge } from '../ui/badge';
 
 export default function PoolDetails(props: any) {
     const { loading, getPoolData, user } = UserAuth();

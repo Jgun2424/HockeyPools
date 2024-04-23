@@ -8,8 +8,8 @@ import { useRouter } from 'next/navigation'
 import { LogOut, MoonIcon, SunIcon, User, HomeIcon } from 'lucide-react'
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuGroup, DropdownMenuPortal, DropdownMenuSeparator, DropdownMenuShortcut, DropdownMenuSub, DropdownMenuSubContent, DropdownMenuSubTrigger } from '@/components/ui/dropdown-menu'
 import { Badge } from "@/components/ui/badge"
-import { UserAuth } from '../app/firebase/AuthContext'
-import { Avatar, AvatarFallback } from './ui/avatar'
+import { UserAuth } from '../../app/firebase/AuthContext'
+import { Avatar, AvatarFallback } from './avatar'
 
 
 export default function Nav() {

@@ -1,8 +1,8 @@
 'use client'
 
 import { useState } from "react"
-import MyPools from "@/components/MyPools"
-import UserSettings from "@/components/UserSettings"
+import MyPools from "@/components/Pool/MyPools"
+import UserSettings from "@/components/User/UserSettings"
 
 export default function page() {
   const [Selected, setSelected] = useState("profile")
